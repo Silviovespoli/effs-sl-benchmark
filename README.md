@@ -131,19 +131,35 @@ The file `results/best_known_results.csv` contains the best results obtained by 
 4. **Matheuristic** — IG sequence search + exact MILP speed assignment
 5. **DRL** — deep reinforcement learning agent for speed assignment
 
-### Summary of best savings (%) on large instances (IG)
+### Summary of best savings (%) on large instances — IG
 
 | Instance | SL*=50% | SL*=60% | SL*=70% |
 |----------|---------|---------|---------|
-| sim1_1000jobs_70sl | 25.0 | 23.3 | 24.0 |
-| sim1_1000jobs_80sl | 28.5 | 26.5 | 25.6 |
-| sim1_1000jobs_99sl | 31.8 | 28.0 | 27.7 |
-| sim1_3000jobs_70sl | 24.2 | 23.6 | 23.6 |
-| sim1_3000jobs_80sl | 24.8 | 24.5 | 24.4 |
-| sim1_3000jobs_99sl | 27.8 | 26.6 | 26.7 |
-| sim1_5000jobs_70sl | 24.5 | 23.8 | 23.9 |
-| sim1_5000jobs_80sl | 26.1 | 25.2 | 25.1 |
-| sim1_5000jobs_99sl | 30.3 | 28.5 | 28.4 |
+| sim1_1000jobs_70sl | 28.4 | 26.6 | 25.5 |
+| sim1_1000jobs_80sl | 32.5 | 27.2 | 27.1 |
+| sim1_1000jobs_99sl | 36.5 | 28.4 | 31.2 |
+| sim1_3000jobs_70sl | 24.1 | 23.6 | 23.5 |
+| sim1_3000jobs_80sl | 25.2 | 24.7 | 24.4 |
+| sim1_3000jobs_99sl | 27.5 | 26.4 | 26.2 |
+| sim1_5000jobs_70sl | 24.5 | 23.9 | 23.8 |
+| sim1_5000jobs_80sl | 26.1 | 25.2 | 25.2 |
+| sim1_5000jobs_99sl | 30.2 | 28.5 | 28.4 |
+
+### Summary of best savings (%) on large instances — Matheuristic
+
+| Instance | SL*=50% | SL*=60% | SL*=70% |
+|----------|---------|---------|---------|
+| sim1_1000jobs_70sl | 28.2 | 26.1 | 25.0 |
+| sim1_1000jobs_80sl | 31.0 | 27.2 | 27.1 |
+| sim1_1000jobs_99sl | 34.4 | 28.3 | 29.3 |
+| sim1_3000jobs_70sl | 24.0 | 23.3 | 23.3 |
+| sim1_3000jobs_80sl | 25.0 | 24.6 | 24.3 |
+| sim1_3000jobs_99sl | 27.2 | 26.4 | 26.2 |
+| sim1_5000jobs_70sl | 24.1 | 23.8 | 23.8 |
+| sim1_5000jobs_80sl | 25.9 | 25.1 | 25.1 |
+| sim1_5000jobs_99sl | 30.2 | 28.4 | 28.4 |
+
+**Note on DRL:** The DRL agent (trained on instances with $n \in [5, 30]$) violates the SL constraint on all large instances, achieving SL values of 30–58% regardless of the target. DRL results are included in `best_known_results.csv` for completeness but are infeasible. See the paper for a detailed discussion.
 
 ### Summary of best savings (%) on small instances
 
