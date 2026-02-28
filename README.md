@@ -159,39 +159,58 @@ The file `results/best_known_results.csv` contains the best results obtained by 
 | sim1_5000jobs_80sl | 25.9 | 25.1 | 25.1 |
 | sim1_5000jobs_99sl | 30.2 | 28.4 | 28.4 |
 
-**Note on DRL:** The DRL agent (trained on instances with $n \in [5, 30]$) violates the SL constraint on all large instances, achieving SL values of 30–58% regardless of the target. DRL results are included in `best_known_results.csv` for completeness but are infeasible. See the paper for a detailed discussion.
+**Note on DRL:** The DRL agent (trained on instances with $n \in [5, 200]$) satisfies the SL constraint on all small instances (Table 1) and on all large instances at SL\*=50%. At SL\*=70%, it violates the constraint on 7 out of 9 large instances. DRL results are included in `best_known_results.csv` with the achieved SL reported alongside savings. See the paper for a detailed discussion.
+
+### Summary of DRL savings (%) on large instances
+
+| Instance | SL\*=50% (savings / SL) | SL\*=60% (savings / SL) | SL\*=70% (savings / SL) |
+|----------|------------------------|------------------------|------------------------|
+| sim1_1000jobs_70sl | 22.4 / 55.6 | 22.3 / 55.6 | 22.3 / 57.0 |
+| sim1_1000jobs_80sl | 23.9 / 60.7 | 23.9 / 63.7 | 24.1 / 67.2 |
+| sim1_1000jobs_99sl | 26.2 / 68.8 | 26.5 / 70.6 | 26.6 / 75.5 |
+| sim1_3000jobs_70sl | 21.8 / 55.6 | 22.3 / 57.9 | 22.8 / 61.3 |
+| sim1_3000jobs_80sl | 23.1 / 59.3 | 23.3 / 61.3 | 23.6 / 63.4 |
+| sim1_3000jobs_99sl | 24.2 / 54.9 | 24.5 / 58.1 | 24.8 / 62.5 |
+| sim1_5000jobs_70sl | 23.0 / 57.6 | 23.1 / 59.6 | 23.4 / 62.6 |
+| sim1_5000jobs_80sl | 23.8 / 56.7 | 24.0 / 60.8 | 24.3 / 64.5 |
+| sim1_5000jobs_99sl | 26.7 / 66.0 | 27.0 / 69.1 | 27.2 / 71.3 |
 
 ### Summary of best savings (%) on small instances
 
 | $n$ | SL* | Full MILP | Speed MILP | IG | Matheuristic | DRL |
 |-----|-----|-----------|-----------|-----|-------------|-----|
-| 10 | 70% | 37.9 | 37.9 | 37.9 | 37.9 | 30.8 |
-| 10 | 80% | 37.9 | 37.9 | 37.9 | 36.8 | 27.8 |
-| 10 | 90% | 37.9 | 37.9 | 34.8 | 34.4 | 24.1 |
-| 15 | 70% | 37.9 | 36.9 | 37.9 | 37.9 | 27.3 |
-| 15 | 80% | 37.9 | 34.6 | 35.7 | 35.4 | 25.2 |
-| 15 | 90% | --- | 33.3 | 33.6 | 34.4 | 21.2 |
-| 20 | 70% | 37.9 | 37.9 | 37.9 | 37.9 | 29.6 |
-| 20 | 80% | 37.5 | 37.5 | 37.9 | 37.9 | 29.7 |
-| 20 | 90% | --- | 36.0 | 37.9 | 36.8 | 24.8 |
+| 10 | 70% | 37.9 | 37.9 | 37.9 | 37.9 | 31.2 |
+| 10 | 80% | 37.9 | 37.9 | 37.9 | 36.8 | 31.3 |
+| 10 | 90% | 37.9 | 37.9 | 34.8 | 34.4 | 31.3 |
+| 15 | 70% | 37.9 | 36.9 | 37.9 | 37.9 | 26.1 |
+| 15 | 80% | 37.9 | 34.6 | 35.7 | 35.4 | 26.1 |
+| 15 | 90% | --- | 33.3 | 33.6 | 34.4 | 26.1 |
+| 20 | 70% | 37.9 | 37.9 | 37.9 | 37.9 | 28.7 |
+| 20 | 80% | 37.5 | 37.5 | 37.9 | 37.9 | 28.7 |
+| 20 | 90% | --- | 36.0 | 37.9 | 36.8 | 28.7 |
 
 ## DRL Model
 
-The file `models/ppo_speed_universal.zip` contains a pre-trained PPO agent for speed assignment. It was trained using [Stable-Baselines3](https://github.com/DLR-RM/stable-baselines3) on random instances with $n \in [5, 30]$ and SL targets in $\{50\%, 55\%, \ldots, 95\%\}$.
+The directory `models/` contains:
+- `ppo_speed_universal.zip` — a pre-trained PPO agent for per-operation speed assignment
+- `vecnormalize.pkl` — reward normalisation statistics (required for correct inference)
+
+The model was trained using [Stable-Baselines3](https://github.com/DLR-RM/stable-baselines3) on random instances with $n \in [5, 200]$, SL targets in $\{50\%, 55\%, \ldots, 95\%\}$, for 10 million timesteps with `ent_coef=0.005`, `gamma=0.999`, and `VecNormalize` (reward-only).
 
 To use the model:
 
 ```python
 from stable_baselines3 import PPO
+from stable_baselines3.common.vec_env import VecNormalize
 
 model = PPO.load("models/ppo_speed_universal")
-# See the paper for the 15-dimensional observation space definition
+# See the paper for the 17-dimensional observation space definition
 obs = ...  # construct observation vector
 action, _ = model.predict(obs, deterministic=True)
 speed = [0.6, 0.8, 1.0][action]
 ```
 
-The observation space is a 15-dimensional vector; see Section 4.6 of the paper for the full feature definition.
+The observation space is a 17-dimensional vector; see Section 3.4 of the paper for the full feature definition.
 
 ## Reproducing Instances
 
@@ -240,7 +259,8 @@ effs-sl-benchmark/
 │   ├── convert_excel_to_csv.py      # Excel-to-CSV conversion
 │   └── generate_small_instances.py  # Deterministic small instance generator
 └── models/
-    └── ppo_speed_universal.zip      # Pre-trained DRL model (~1.7 MB)
+    ├── ppo_speed_universal.zip      # Pre-trained DRL model (~1.7 MB)
+    └── vecnormalize.pkl             # Reward normalisation statistics
 ```
 
 ## License
